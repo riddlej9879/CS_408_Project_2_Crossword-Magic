@@ -3,31 +3,33 @@ package com.example.project_2_crossword_magic.model.dao;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import android.util.Log;
+
 import java.util.HashMap;
 
 public class WordDAO {
-
     private final DAOFactory daoFactory;
+    private final String TAG = "WordDAO Mine";
 
     WordDAO(DAOFactory daoFactory) {
+        Log.d(TAG, "Constructor(factory");
         this.daoFactory = daoFactory;
     }
 
     public int create(HashMap<String, String> params) {
-
         /* use this method if there is NOT already a SQLiteDatabase open */
-
+        Log.d(TAG, "create(Hashmap<>)");
         SQLiteDatabase db = daoFactory.getWritableDatabase();
         int result = create(db, params);
         db.close();
-        return result;
 
+        return result;
     }
 
     public int create(SQLiteDatabase db, HashMap<String, String> params) {
-
         /* use this method if there IS already a SQLiteDatabase open */
-
+        // Runs everytime PuzzleDoa calls it.
+        //Log.d(TAG, "create(db, Hashmap<>");
         String puzzleid = daoFactory.getProperty("sql_field_puzzleid");
         String row = daoFactory.getProperty("sql_field_row");
         String column = daoFactory.getProperty("sql_field_column");
@@ -48,7 +50,5 @@ public class WordDAO {
         int key = (int)db.insert(daoFactory.getProperty("sql_table_words"), null, values);
 
         return key;
-
     }
-
 }

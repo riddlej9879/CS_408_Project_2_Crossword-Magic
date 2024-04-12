@@ -6,9 +6,12 @@ public enum WordDirection {
     DOWN("D");
     private String message;
 
-    private WordDirection(String msg) { message = msg; }
+    WordDirection(String msg) {
+        message = msg;
+    }
 
     @Override
-    public String toString() { return message; }
-
+    public String toString() {
+        return message;
+    }
 }

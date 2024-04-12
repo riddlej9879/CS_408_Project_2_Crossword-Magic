@@ -2,6 +2,9 @@ package com.example.project_2_crossword_magic.model;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
+
+import android.util.Log;
 
 public class Puzzle {
     public static final char BLOCK_CHAR = '*';
@@ -19,12 +22,14 @@ public class Puzzle {
     private boolean solved = false;
 
     private final StringBuilder cluesAcrossBuffer, cluesDownBuffer;
+    private final String TAG = "Puzzle.java Mine";
 
     public Puzzle(HashMap<String, String> params) {
+        Log.d(TAG, "Constructor");
         this.name = params.get("name");
         this.description = params.get("description");
-        this.height = Integer.parseInt(params.get("height"));
-        this.width = Integer.parseInt(params.get("width"));
+        this.height = Integer.parseInt(Objects.requireNonNull(params.get("height")));
+        this.width = Integer.parseInt(Objects.requireNonNull(params.get("width")));
 
         guessed = new HashSet<>();
         words = new HashMap<>();
@@ -45,6 +50,7 @@ public class Puzzle {
     }
 
     public void addWordToPuzzle(Word word) {
+        Log.d("find", "addWordToPuzzle(word)");
         String key = (word.getBox() + word.getDirection().toString());
 
         /* add to collection */
@@ -70,11 +76,12 @@ public class Puzzle {
 
         /* append clue (across or down) to corresponding StringBuilder */
         if (word.isAcross()) {
+            Log.d(TAG, "if (word.isAcross())");
             cluesAcrossBuffer.append(word.getBox()).append(": ");
             cluesAcrossBuffer.append(word.getClue()).append(System.lineSeparator());
         }
-
         else if (word.isDown()) {
+            Log.d(TAG, "else if (word.isDown())");
             cluesDownBuffer.append(word.getBox()).append(": ");
             cluesDownBuffer.append(word.getClue()).append(System.lineSeparator());
         }
@@ -84,6 +91,7 @@ public class Puzzle {
     }
 
     public WordDirection checkGuess(Integer num, String guess) {
+        Log.d(TAG, "checkGuess(num, guess");
         WordDirection result = null;
 
         String acrossKey = num + WordDirection.ACROSS.toString();
@@ -124,6 +132,7 @@ public class Puzzle {
     }
 
     public void addWordToGuessed(String key) {
+        Log.d(TAG, "addWordToGuessed(key");
         Word w = words.get(key);
         guessed.add(key);
 
@@ -145,46 +154,57 @@ public class Puzzle {
     }
 
     public Word getWord(String key) {
+        Log.d(TAG, "getWord(key)");
         return words.get(key);
     }
 
     public String getName() {
+        Log.d(TAG, "getName()");
         return name;
     }
 
     public String getDescription() {
+        Log.d(TAG, "getDescription()");
         return description;
     }
 
     public Integer getWidth() {
+        Log.d(TAG, "getWidth()");
         return width;
     }
 
     public Integer getHeight() {
+        Log.d(TAG, "getHeight()");
         return height;
     }
 
     public String getCluesAcross() {
+        Log.d(TAG, "getCluesAcross()");
         return cluesAcrossBuffer.toString();
     }
 
     public String getCluesDown() {
+        Log.d(TAG, "getCluesDown()");
         return cluesDownBuffer.toString();
     }
 
     public int getSize() {
+        Log.d(TAG, "getSize(): " + words.size());
         return words.size();
     }
 
     public Character[][] getLetters() {
+        Log.d(TAG, "getLetters()");
         return letters;
     }
 
     public Integer[][] getNumbers() {
+        Log.d(TAG, "getNumbers()");
         return numbers;
     }
 
     public boolean isSolved() {
+        Log.d(TAG, "isSolved()");
         return solved;
     }
 }
