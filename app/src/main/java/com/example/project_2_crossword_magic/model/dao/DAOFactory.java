@@ -1,11 +1,8 @@
 package com.example.project_2_crossword_magic.model.dao;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import androidx.annotation.Nullable;
 
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
@@ -13,7 +10,6 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 
 import java.util.List;
-import android.util.Log;
 import java.util.HashMap;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -22,7 +18,6 @@ import com.example.project_2_crossword_magic.R;
 
 public class DAOFactory extends SQLiteOpenHelper {
     private final Context context;
-    private final String TAG = "DAOFactory Mine";
     private final DAOProperties properties;
 
     private static final String DATABASE_NAME = "cwmagic.db";
@@ -34,25 +29,21 @@ public class DAOFactory extends SQLiteOpenHelper {
     public DAOFactory(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
-        Log.d(TAG, "Constructor(context)");
 
         properties = new DAOProperties(context, DATABASE_NAME);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(TAG, "onCreate(db)");
         db.execSQL(properties.getProperty("sql_create_puzzles_table"));
         db.execSQL(properties.getProperty("sql_create_words_table"));
         db.execSQL(properties.getProperty("sql_create_guesses_table"));
-        PuzzleDAO puzzleDAO = new PuzzleDAO(this);
 
         addInitialDataFromCSV(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(TAG, "onUpgrade(db, old_Ver, new_Ver)");
         db.execSQL(properties.getProperty("sql_drop_guesses_table"));
         db.execSQL(properties.getProperty("sql_drop_words_table"));
         db.execSQL(properties.getProperty("sql_drop_puzzles_table"));
@@ -61,23 +52,22 @@ public class DAOFactory extends SQLiteOpenHelper {
     }
 
     public PuzzleDAO getPuzzleDAO() {
-        Log.d(TAG, "getPuzzleDAO()");
         return new PuzzleDAO(this);
     }
 
     public WordDAO getWordDAO() {
-        Log.d(TAG, "getWordDAO()");
         return new WordDAO(this);
     }
 
+    public GuessDAO getGuessDAO() {
+        return new GuessDAO(this);
+    }
+
     public String getProperty(String key) {
-        // Runs alot
-        //Log.d(TAG, "getProperty(key): " + properties.getProperty(key));
         return (properties.getProperty(key));
     }
 
-    public int addInitialDataFromCSV(SQLiteDatabase db) {
-        Log.d(TAG, "addInitialDataFromCSV(db)");
+    public void addInitialDataFromCSV(SQLiteDatabase db) {
         int puzzleid = 0;
 
         /* populate initial database from CSV data file */
@@ -89,11 +79,11 @@ public class DAOFactory extends SQLiteOpenHelper {
                     InputStreamReader(context.getResources().openRawResource(R.raw.puzzle)));
             CSVParser parser = (new CSVParserBuilder()).withSeparator('\t').withIgnoreQuotations(true).build();
             CSVReader reader = (new CSVReaderBuilder(br)).withCSVParser(parser).build();
-            List<String[]> csv = reader.readAll();
-            Log.d(TAG+" AddInit", "try: " + csv.toString());
 
+            List<String[]> csv = reader.readAll();
             String[] fields = csv.get(0);
             HashMap<String, String> params;
+
             if (fields.length == CSV_HEADER_FIELDS) {
                 params = new HashMap<>();
 
@@ -104,7 +94,6 @@ public class DAOFactory extends SQLiteOpenHelper {
                 params.put(properties.getProperty("sql_field_width"), fields[3]);
 
                 puzzleid = puzzleDAO.create(db, params);
-                Log.d("id", String.valueOf(puzzleid));
 
                 for (int i = 1; i < csv.size(); ++i) {
                     fields = csv.get(i);
@@ -123,7 +112,6 @@ public class DAOFactory extends SQLiteOpenHelper {
 
                         wordDAO.create(db, params);
                     }
-                    Log.d("Index: ", String.valueOf(i));
                 }
             }
 
@@ -132,7 +120,5 @@ public class DAOFactory extends SQLiteOpenHelper {
         catch (Exception e) {
             e.printStackTrace();
         }
-
-        return puzzleid;
     }
 }

@@ -1,40 +1,60 @@
 package com.example.project_2_crossword_magic.view;
 
-import android.util.Log;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
-import android.annotation.SuppressLint;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.project_2_crossword_magic.R;
+import java.beans.PropertyChangeEvent;
+
+import com.example.project_2_crossword_magic.controller.CrosswordMagicController;
 import com.example.project_2_crossword_magic.databinding.FragmentClueBinding;
 
-public class ClueFragment  extends Fragment {
-    private final String TAG = "ClueFragment Mine";
+public class ClueFragment extends Fragment implements AbstractView {
+    private CrosswordMagicController controller;
     private FragmentClueBinding clueBinding;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        Log.d(TAG,"onCreate()");
-        clueBinding = FragmentClueBinding.inflate(getLayoutInflater(),
-                container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                 ViewGroup container,  Bundle savedInstanceState) {
+        clueBinding = FragmentClueBinding.inflate(getLayoutInflater(), container, false);
+        return clueBinding.getRoot();
+    }
 
-        return (ViewGroup) inflater.inflate(R.layout.fragment_clue, null);
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstance) {
+        super.onViewCreated(view, savedInstance);
+
+        this.controller = ((MainActivity)getContext()).getController();
+        controller.addView(this);
+
+        controller.getCluesDown();
+        controller.getCluesAcross();
+    }
+
+    @Override
+    public void modelPropertyChange(PropertyChangeEvent evt) {
+        String name = evt.getPropertyName();
+        Object value = evt.getNewValue();
+
+        if (name.equals(CrosswordMagicController.CLUES_ACROSS_PROPERTY)) {
+            if (value instanceof String) {
+                clueBinding.acrossContainer.setText(value.toString());
+            }
+        }
+        if (name.equals(CrosswordMagicController.CLUES_DOWN_PROPERTY)) {
+            if (value instanceof String) {
+                clueBinding.downContainer.setText(value.toString());
+            }
+        }
     }
 
     @Override
     public void onDestroyView() {
-        Log.d(TAG, "onDestroy()");
         super.onDestroyView();
         clueBinding = null;
-    }
-
-    private void initClue(View view) {
-        Log.d(TAG, "initClue()");
     }
 }

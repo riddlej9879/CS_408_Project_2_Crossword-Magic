@@ -1,5 +1,12 @@
 <resources>
-    <string name="app_name">Proj2-Crossword-Magic</string>
+    <string name="app_name">Crossword Magic Puzzle</string>
+    <string name="across_label_text">ACROSS</string>
+    <string name="down_label_text">DOWN</string>
+    <string name="guess_title">What is your guess?</string>
+    <string name="guess_message">Enter guess:</string>
+    <string name="guess_correct">Correct answer, YAY!!!</string>
+    <string name="guess_incorrect">Incorrect. Sorry.</string>
+
     <!-- Tab Text -->
     <string-array name="tab_list">
         <item name="puzzle">Puzzle</item>
